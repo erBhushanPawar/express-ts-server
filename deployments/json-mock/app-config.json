@@ -1,0 +1,8 @@
+{
+    "dev": {
+        "env": "development"
+    },
+    "prod": {
+        "env": "production"
+    }
+}

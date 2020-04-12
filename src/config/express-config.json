@@ -1,0 +1,66 @@
+{
+    "port": 3001,
+    "env": "development",
+    "serverName": "Node TS demo server",
+    "shouldOpenHTTPPort": true,
+    "SSL": {
+        "port": 3002,
+        "certPath": "/config/ssl/my-cert.pem",
+        "keyPath": "/config/ssl/my-key.key"
+    },
+    "serverIdentify": {
+        "signature": "123hkdjfbwuerknsdkfbwkerbwekrbi2wbbdkfbwekbrkwebr",
+        "handshakeTTL": "8726348723486238462387746283764"
+    },
+    "deploymentTypes": {
+        "static": true,
+        "json": true,
+        "middleware": true
+    },
+    "staticDeployments": [
+        {
+            "context": "/static/dep1",
+            "directory": "../../deployments/static/dep1",
+            "shouldDeploy": false
+        },
+        {
+            "context": "/static/dep2",
+            "directory": "../../deployments/static/dep2",
+            "shouldDeploy": true
+        }
+    ],
+    "jsonDeployments": [
+        {
+            "context": "/json-mock/app-config",
+            "directory": "/../deployments/json-mock/app-config.json",
+            "shouldDeploy": true,
+            "config": {
+                "readOnly": true
+            }
+        },
+        {
+            "context": "/json-mock/data",
+            "directory": "/../deployments/json-mock/some-data.json",
+            "shouldDeploy": true,
+            "config": {
+                "readOnly": false
+            }
+        }
+    ],
+    "middlewareDeployments": [
+        {
+            "shouldDeploy": false,
+            "contextPrefix": "jsonBlob",
+            "serverURL": "https://jsonblob.com/api/",
+            "allowedMethods": [
+                "POST"
+            ],
+            "headers": {}
+        }
+    ],
+    "loggerConfig": {
+        "level": "info",
+        "combinedLogFile": "./logs/combined.log",
+        "errorLogFile": "./logs/errors.log"
+    }
+}
