@@ -19,6 +19,11 @@
     },
     "staticDeployments": [
         {
+            "context": "/static/image-server",
+            "directory": "../../deployments/static/image-server",
+            "shouldDeploy": true
+        },
+        {
             "context": "/static/dep1",
             "directory": "../../deployments/static/dep1",
             "shouldDeploy": false

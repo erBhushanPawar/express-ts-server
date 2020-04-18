@@ -12,8 +12,11 @@ import BaseRouter from './routes';
 import logger from '@shared/Logger';
 import { expressConfig } from '@shared/constants';
 import middlewareHandler from '@shared/middleware-handler';
+import fileHandler from '@shared/file-handler';
+import imageHandler from '@shared/image-handler';
+import videoHandler from '@shared/video-handler';
 
-const fileUpload = require('express-fileupload');
+
 
 class ExpressServer {
     // Init express
@@ -21,15 +24,6 @@ class ExpressServer {
     jsonServer: any;
     constructor() {
         this.app = express();
-        const bodyParser = require('body-parser');
-
-        this.app.use(fileUpload({
-            limits: { fileSize: 50 * 1024 * 1024 },
-        }));
-        this.app.use(bodyParser.urlencoded({ extended: false }))
-        this.app.use(bodyParser.json())
-        this.app.use(express.static(path.join(__dirname, 'public')));
-
         this.initServer();
         this.mountRouters();
         if (expressConfig.deploymentTypes.static) {
@@ -51,6 +45,14 @@ class ExpressServer {
         this.app.use(express.json());
         this.app.use(express.urlencoded({ extended: true }));
         this.app.use(cookieParser());
+
+        const bodyParser = require('body-parser');
+
+        const fileUpload = require('express-fileupload');
+        this.app.use(fileUpload({
+            limits: { fileSize: 50 * 1024 * 1024 },
+        }));
+        this.app.use(bodyParser.urlencoded({ extended: false }))
 
         this.applyEnvChanges();
 
@@ -79,22 +81,23 @@ class ExpressServer {
     }
 
     mountRouters() {
-        this.app.post('/upload', function (req: any, res: Response) {
-            if (!req.files)
-                return res.status(400).send('No files were uploaded.');
 
-            console.log(req.files); // the uploaded file object
-            res.json({ files: req.files.foo })
-        });
         this.app.use('/api', BaseRouter);
         this.app.use('/mw', middlewareHandler.router);
+        this.app.use('/file-server', fileHandler);
+        this.app.use('/image-server', imageHandler);
+        this.app.use('/video-server', videoHandler);
+    }
+
+
+    prepareFileUpload() {
 
     }
 
     mountStaticDeployments() {
         expressConfig.staticDeployments.forEach((d: any) => {
             if (d.shouldDeploy) {
-
+                logger.info(`deploying the ${d.context} using directory ${__dirname + d.directory}`)
                 this.app.use(d.context, express.static(__dirname + d.directory))
             }
         });
